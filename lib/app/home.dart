@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Demo"),
+        title: Text("Todo App"),
       ),
       body: ListView.builder(
           itemCount: todo?.length ?? 20,
@@ -88,71 +88,65 @@ class _RenderItemState extends State<RenderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 7,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 5),
-                        child: const Text(
-                          "Title",
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w400),
-                        ),
+    return Container(
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white54,
+          boxShadow: [
+            BoxShadow(
+                color: const Color.fromARGB(255, 227, 224, 224),
+                blurRadius: 10,
+                offset: const Offset(5, 5)),
+          ]),
+      child: Padding(
+        padding: EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Expanded(
+                flex: 7,
+                child: Column(
+                  children: [
+                    Container(
+                      alignment: FractionalOffset.topLeft,
+                      child: Text(
+                        widget.todo[widget.index].title,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
                       ),
-                      const SizedBox(
-                        width: 10,
-                        child: Text(":"),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      alignment: FractionalOffset.topLeft,
+                      child: Text(
+                        widget.todo[widget.index].description,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w300),
                       ),
-                      Text(widget.todo[widget.index].title),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 5),
-                        child: const Text(
-                          "Description",
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                      const SizedBox(
-                        child: Text(":"),
-                        width: 10,
-                      ),
-                      Text(widget.todo[widget.index].description),
-                    ],
-                  ),
-                ],
-              )),
-          Expanded(
-              flex: 2,
-              child: Row(
-                children: [
-                  Container(
-                    child: IconButton(
-                        onPressed: _editTodo, icon: Icon(Icons.edit)),
-                  ),
-                  Container(
-                    child: IconButton(
-                        onPressed: () {
-                          widget.onRemove();
-                        },
-                        icon: Icon(Icons.delete_outline)),
-                  ),
-                ],
-              )),
-        ],
+                    ),
+                  ],
+                )),
+            Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    Container(
+                      child: IconButton(
+                          onPressed: _editTodo, icon: Icon(Icons.edit)),
+                    ),
+                    Container(
+                      child: IconButton(
+                          onPressed: () {
+                            widget.onRemove();
+                          },
+                          icon: Icon(Icons.delete_outline)),
+                    ),
+                  ],
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -232,32 +226,49 @@ class _AddToFormState extends State<AddToForm> {
                     hintText: "Input Description"),
               ),
             ),
-            ElevatedButton(
-                onPressed: () {
-                  if (_titleController.text.isNotEmpty &&
-                      _descController.text.isNotEmpty) {
-                    Todos newItem =
-                        Todos(_titleController.text, _descController.text);
-                    if (initialTodo == null) {
-                      widget.onAddTodo(newItem);
+            Container(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      backgroundColor: Colors.blueGrey,
+                      foregroundColor: Colors.white),
+                  onPressed: () {
+                    if (_titleController.text.isNotEmpty &&
+                        _descController.text.isNotEmpty) {
+                      onSubmit(context);
                     } else {
-                      widget.onAddTodo(newItem);
+                      validationError(context);
                     }
-                    _titleController.clear();
-                    _descController.clear();
-                    Navigator.pop(context);
-                  } else {
-                    validationError(context);
-                  }
-                },
-                child: Text("Submit"))
+                  },
+                  child: Text("Submit")),
+            )
           ],
         ),
       ),
     );
   }
 
+  void onSubmit(BuildContext context) {
+    Todos newItem = Todos(_titleController.text, _descController.text);
+    if (initialTodo == null) {
+      widget.onAddTodo(newItem);
+    } else {
+      widget.onAddTodo(newItem);
+    }
+
+    // clear input fields
+    _titleController.clear();
+    _descController.clear();
+
+    // close modal
+    Navigator.pop(context);
+  }
+
   void validationError(BuildContext context) {
+    //validation show error on alert
     showDialog(
         context: context,
         builder: (BuildContext context) {
