@@ -1,6 +1,7 @@
-# todo
+# Flutter - Todo App
 
-A new Flutter project.
+https://github.com/kabitacode/flutter-simple-todo/assets/30437682/b8df9b9e-84d5-4ddb-b527-a801b4254d62
+
 
 ## Getting Started
 
